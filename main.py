@@ -34,6 +34,21 @@ def generate_passowrd():
         password += char
 
     password_entry.insert(0,password)
+# ---------------------------- SAVE PASSWORD ------------------------------- #
+def search_button():
+    website = website_entry.get()
+    email = ''
+    password = ''
+    with open('data.json', 'r') as data_file:
+        data = json.load(data_file)
+        try:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.askokcancel(title=f"{website} information", message=f"these are your {website} information:\n"
+                                                                           f"email: {email}\n"
+                                                                           f"password: {password}")
+        except KeyError:
+            messagebox.askokcancel(title="Website not found", message=f"{website} data can not found")
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def add_button():
@@ -56,14 +71,19 @@ def add_button():
                                                                 f"email: {email} \n"
                                                                 f"password: {password}")
         if is_save:
-            with open("data.json", "r") as data_file:
-                # data_file.write(f"{website} | email: {email} | password: {password} \n")
-                data= json.load(data_file)
+            try:
+                with open("data.json", "r") as data_file:
+                    data= json.load(data_file)
+                    data.update(new_data)
+            except FileNotFoundError:
+                with open("data.json", "w") as data_file:
+                    json.dump(new_data, data_file, indent=4)
+            else:
                 data.update(new_data)
 
-            with open("data.json", "w") as data_file:
-                json.dump(data, data_file, indent=4)
-
+                with open("data.json", "w") as data_file:
+                    json.dump(data, data_file, indent=4)
+            finally:
                 website_entry.delete(0, END)
                 email_entry.delete(0, END)
                 password_entry.delete(0, END)
@@ -112,8 +132,8 @@ password_label = Label(text="Password: ", width=20)
 password_label.grid(row=3,column=0)
 
 # entry
-website_entry = Entry(width=35)
-website_entry.grid(row=1, column=1, columnspan=2)
+website_entry = Entry(width=25)
+website_entry.grid(row=1, column=1)
 website_entry.focus()
 email_entry = Entry(width=35)
 email_entry.grid(row=2, column=1, columnspan=2)
@@ -125,6 +145,8 @@ generate_password = Button(text="Generate password", command=generate_passowrd)
 generate_password.grid(row=3, column=2, columnspan=2)
 add_button = Button(text="add", width=36, command=add_button)
 add_button.grid(row=4, column=1, columnspan=2)
+search_button = Button(text="Search", command=search_button)
+search_button.grid(row=1, column=2, columnspan=2)
 
 print(tkinter.TkVersion)
 
