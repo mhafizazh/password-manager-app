@@ -2,6 +2,7 @@ import tkinter
 from tkinter import *
 from tkinter import messagebox
 import random
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_passowrd():
@@ -40,16 +41,57 @@ def add_button():
     email = email_entry.get()
     password = password_entry.get()
 
-    is_save = messagebox.askokcancel(title=website, message=f"these are your information: \n"
-                                                            f"email: {email} \n"
-                                                            f"password: {password}")
-    if is_save:
-        with open("password-manager.txt", "a") as data_file:
-            data_file.write(f"{website} | email: {email} | password: {password} \n")
-            website_entry.delete(0, END)
-            email_entry.delete(0, END)
-            password_entry.delete(0, END)
+    new_data = {
+        website: {
+            "email": email,
+            "password": password
+        }
+    }
 
+    if len(website) == 0 or len(email) == 0 or len(password) == 0 :
+        messagebox.showinfo(title="Invalid input", message="Please fill all the boxes")
+    else:
+        is_save = messagebox.askokcancel(title=website, message=f"these are your information: \n"
+                                                                f"website: {website}\n"
+                                                                f"email: {email} \n"
+                                                                f"password: {password}")
+        if is_save:
+            with open("data.json", "r") as data_file:
+                # data_file.write(f"{website} | email: {email} | password: {password} \n")
+                data= json.load(data_file)
+                data.update(new_data)
+
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
+
+                website_entry.delete(0, END)
+                email_entry.delete(0, END)
+                password_entry.delete(0, END)
+# ---------------------------- POP UP GUI ------------------------------- #
+def pop_up_window(text):
+    popup = Toplevel(window)
+    popup.title("Popup Window")
+
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    # Calculate the position to center the popup window
+    popup_width = 300  # Specify the width of the popup
+    popup_height = 100  # Specify the height of the popup
+    x_position = (screen_width - popup_width) // 2
+    y_position = (screen_height - popup_height) // 2
+
+    # Set the geometry of the popup window
+    popup.geometry(f"{popup_width}x{popup_height}+{x_position}+{y_position}")
+
+    label = Label(popup, text=text)
+    label.pack(padx=10, pady=10)
+
+    close_button = Button(popup, text="Close", command=popup.destroy)
+    close_button.pack(pady=10)
+
+    # Make the popup modal
+    popup.grab_set()
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -59,7 +101,7 @@ window.config(pady=20,padx=20)
 canvas = Canvas(height=250,width=200)
 logo_img = PhotoImage(file="logo.png")
 canvas.create_image(100,100,image=logo_img)
-canvas.grid(row=0,column=1)
+canvas.grid(row=0,column=0, columnspan=3)
 
 # labels
 website_label = Label(text="Website: ", width=20)
@@ -75,22 +117,15 @@ website_entry.grid(row=1, column=1, columnspan=2)
 website_entry.focus()
 email_entry = Entry(width=35)
 email_entry.grid(row=2, column=1, columnspan=2)
-password_entry = Entry(width=35)
+password_entry = Entry(width=17)
 password_entry.grid(row=3, column=1)
 
 # button
 generate_password = Button(text="Generate password", command=generate_passowrd)
-generate_password.grid(row=4, column=3)
+generate_password.grid(row=3, column=2, columnspan=2)
 add_button = Button(text="add", width=36, command=add_button)
-add_button.grid(row=4, column=1, columnspan=1)
+add_button.grid(row=4, column=1, columnspan=2)
 
-
-
-
-# r = Label(bg="red", width=20, height=5)
-# g = Label(bg="green", width=20, height=5)
-# g.grid(row=1,column=1)
-# r.grid(row=0,column=0)
 print(tkinter.TkVersion)
 
 window.mainloop()
