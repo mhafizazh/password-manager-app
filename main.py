@@ -131,21 +131,21 @@ password_label = Label(text="Password: ", width=20)
 password_label.grid(row=3,column=0)
 
 # entry
-website_entry = Entry(width=25)
-website_entry.grid(row=1, column=1)
+website_entry = Entry(width=35)
+website_entry.grid(row=1, column=1, columnspan=2)
 website_entry.focus()
 email_entry = Entry(width=35)
 email_entry.grid(row=2, column=1, columnspan=2)
-password_entry = Entry(width=17)
-password_entry.grid(row=3, column=1)
+password_entry = Entry(width=35)
+password_entry.grid(row=3, column=1, columnspan=2)
 
 # button
-generate_password = Button(text="Generate password", command=generate_passowrd)
-generate_password.grid(row=3, column=2, columnspan=2)
-add_button = Button(text="add", width=36, command=add_button)
-add_button.grid(row=4, column=1, columnspan=2)
-search_button = Button(text="Search", command=search_button)
-search_button.grid(row=1, column=2, columnspan=2)
+generate_password = Button(text="Generate password", command=generate_passowrd, width=15)
+generate_password.grid(row=5, column=1, pady=20)
+add_button = Button(text="add", width=15, command=add_button)
+add_button.grid(row=5, column=0)
+search_button = Button(text="Search", command=search_button, width=15)
+search_button.grid(row=5, column=2, padx=15)
 
 print(tkinter.TkVersion)
 
